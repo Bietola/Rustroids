@@ -1,0 +1,4 @@
+// Bullet
+pub struct Bullet {
+
+}

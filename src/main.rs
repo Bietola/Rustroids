@@ -1,63 +1,22 @@
 extern crate sfml;
 
+mod entity;
+mod game_state;
 mod sf;
+mod systems;
+mod action;
 
+use game_state::GameState;
+use action::Action;
 use sf::RenderTarget;
-
-// Spaceship
-struct Spaceship {
-    texture: sf::Texture,
-    state: sf::Transform,
-    vel: sf::Vector2f,
-}
-
-impl Spaceship {
-    const SPRITE_SIZE: u32 = 100;
-
-    fn new() -> Self {
-        let texture = sf::Texture::from_file("assets/ship.png").expect("Could not load spaceship texture");
-        let tsize = texture.size();
-
-        Self {
-            texture,
-            state: sf::transform::scale(
-                sf::Transform::IDENTITY,
-                Self::SPRITE_SIZE as f32 / tsize.x as f32,
-                Self::SPRITE_SIZE as f32 / tsize.y as f32
-            ),
-            vel: sf::Vector2::new(0.0, 0.0),
-        }
-    }
-
-    fn update(&mut self) {
-        self.state.translate(self.vel.x, self.vel.y);
-    }
-}
-
-impl sf::Drawable for Spaceship {
-    fn draw<'a: 'shader, 'texture, 'shader, 'shader_texture>(
-        &'a self,
-        target: &mut sf::RenderTarget,
-        states: sf::RenderStates<'texture, 'shader, 'shader_texture>,
-    ) {
-        target.draw_with_renderstates(
-            &sf::Sprite::with_texture(&self.texture),
-            sf::RenderStates {
-                transform: sf::transform::combine(self.state, states.transform),
-
-                ..states
-            },
-        );
-    }
-}
 
 // Main
 fn main() {
     // MCC constants
     const CIRCLE_SPEED: f32 = 25.0;
 
-    // Initialize player spaceship
-    let mut ship = Spaceship::new();
+    // Initialize game state
+    let mut game_state = GameState::new();
 
     // Game window
     let mut window = sfml::graphics::RenderWindow::new(
@@ -77,37 +36,27 @@ fn main() {
             use sf::Key;
 
             match e {
+                // Handle closing of window
                 Event::Closed
                 | Event::KeyPressed {
                     code: Key::Return, ..
                 } => {
                     window.close();
+                },
+
+                _ => {
+                    // handle player actions
+                    if let Some(action) = Action::from_event(&e) {
+                        systems::player_action_system(&mut game_state, &action);
+                    } else {
+                        panic!("Cannot interpret event: {:?}", e);
+                    }
                 }
-                Event::KeyPressed { code: Key::Up, .. } => {
-                    ship.vel = sf::Vector2f::new(0.0, -CIRCLE_SPEED);
-                }
-                Event::KeyPressed {
-                    code: Key::Down, ..
-                } => {
-                    ship.vel = sf::Vector2f::new(0.0, CIRCLE_SPEED);
-                }
-                Event::KeyPressed {
-                    code: Key::Left, ..
-                } => {
-                    ship.vel = sf::Vector2f::new(-CIRCLE_SPEED, 0.0);
-                }
-                Event::KeyPressed {
-                    code: Key::Right, ..
-                } => {
-                    ship.vel = sf::Vector2f::new(CIRCLE_SPEED, 0.0);
-                }
-                Event::KeyPressed { code, .. } => println!("{:?}", code),
-                _ => {}
             }
         }
 
         // Update MCC state
-        ship.update();
+        systems::update_physics(&mut game_state);
 
         // Clear screen
         window.clear(&sf::Color::BLACK);
@@ -116,7 +65,7 @@ fn main() {
         // window.draw_circle_shape(
         //     &sf::CircleShape::new(CIRCLE_RADIUS, CIRCLE_POINTS_NUM),
         //     sf::RenderStates {
-        //         transform: ship.state,
+        //         transform ship.state,
         //         ..sf::RenderStates::default()
         //     },
         // );

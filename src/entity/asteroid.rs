@@ -1,0 +1,4 @@
+// Asteroid
+pub struct Asteroid {
+
+}
