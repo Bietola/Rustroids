@@ -3,7 +3,7 @@ extern crate sfml;
 mod entity;
 mod game_state;
 mod sf;
-mod systems;
+mod system;
 mod action;
 
 use game_state::GameState;
@@ -47,16 +47,17 @@ fn main() {
                 _ => {
                     // handle player actions
                     if let Some(action) = Action::from_event(&e) {
-                        systems::player_action_system(&mut game_state, &action);
+                        system::handle_player_action(&mut game_state, &action);
                     } else {
-                        panic!("Cannot interpret event: {:?}", e);
+                        // Do nothing...
+                        ;
                     }
                 }
             }
         }
 
         // Update MCC state
-        systems::update_physics(&mut game_state);
+        system::update_physics(&mut game_state);
 
         // Clear screen
         window.clear(&sf::Color::BLACK);
@@ -69,7 +70,7 @@ fn main() {
         //         ..sf::RenderStates::default()
         //     },
         // );
-        window.draw(&ship);
+        window.draw(&game_state);
 
         // Display drawn stuff
         window.display();

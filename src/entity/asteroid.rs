@@ -1,4 +1,0 @@
-// Asteroid
-pub struct Asteroid {
-
-}

@@ -1,6 +1,8 @@
 use crate::entity::Entity;
-use crate::entity::EntityIndex;
-use crate::entity::all_entities::*;
+
+use crate::sf;
+
+type EntityIndex = usize;
 
 pub struct GameState {
     pub entities: Vec<Entity>,
@@ -15,7 +17,7 @@ impl GameState {
         };
 
         // spawn player ship
-        world.spawn(Entity::Spaceship(Spaceship::new()));
+        world.spawn(Entity::make_player_ship());
 
         // Return world with ship in it
         world
@@ -28,5 +30,18 @@ impl GameState {
         assert!(!self.entities.is_empty());
 
         self.entities.len() - 1
+    }
+}
+
+/// Draws all the entities contained in the game state
+impl sf::Drawable for GameState {
+    fn draw<'a: 'shader, 'texture, 'shader, 'shader_texture>(
+        &'a self,
+        target: &mut sf::RenderTarget,
+        states: sf::RenderStates<'texture, 'shader, 'shader_texture>,
+    ) {
+        for ent in &self.entities {
+            target.draw(&ent)
+        }
     }
 }

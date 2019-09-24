@@ -1,16 +1,17 @@
 use crate::sf;
 
-// Spaceship
-pub struct Spaceship {
+/// Entity
+pub struct Entity {
     pub texture: sf::Texture,
     pub state: sf::Transform,
     pub vel: sf::Vector2f,
 }
 
-impl Spaceship {
+impl Entity {
     const SPRITE_SIZE: u32 = 100;
 
-    pub fn new() -> Self {
+    /// Make player ship
+    pub fn make_player_ship() -> Self {
         let texture = sf::Texture::from_file("assets/ship.png").expect("Could not load spaceship texture");
         let tsize = texture.size();
 
@@ -25,12 +26,14 @@ impl Spaceship {
         }
     }
 
+    /// Update physics
     pub fn update(&mut self) {
         self.state.translate(self.vel.x, self.vel.y);
     }
 }
 
-impl sf::Drawable for Spaceship {
+/// Draw entity
+impl sf::Drawable for &Entity {
     fn draw<'a: 'shader, 'texture, 'shader, 'shader_texture>(
         &'a self,
         target: &mut sf::RenderTarget,

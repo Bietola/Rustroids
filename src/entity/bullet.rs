@@ -1,4 +1,0 @@
-// Bullet
-pub struct Bullet {
-
-}
