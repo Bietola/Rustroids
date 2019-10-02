@@ -1,10 +1,18 @@
+pub mod flags;
+
+use crate::entity::flags::Flags;
 use crate::sf;
 
+/// Index uniquely identifying an entity
+pub type EntityIndex = usize;
+
 /// Entity
+#[derive(Debug)]
 pub struct Entity {
     pub texture: sf::Texture,
     pub state: sf::Transform,
     pub vel: sf::Vector2f,
+    pub flags: Flags,
 }
 
 impl Entity {
@@ -12,7 +20,8 @@ impl Entity {
 
     /// Make player ship
     pub fn make_player_ship() -> Self {
-        let texture = sf::Texture::from_file("assets/ship.png").expect("Could not load spaceship texture");
+        let texture =
+            sf::Texture::from_file("assets/ship.png").expect("Could not load spaceship texture");
         let tsize = texture.size();
 
         Self {
@@ -20,9 +29,10 @@ impl Entity {
             state: sf::transform::scale(
                 sf::Transform::IDENTITY,
                 Self::SPRITE_SIZE as f32 / tsize.x as f32,
-                Self::SPRITE_SIZE as f32 / tsize.y as f32
+                Self::SPRITE_SIZE as f32 / tsize.y as f32,
             ),
             vel: sf::Vector2::new(0.0, 0.0),
+            flags: Flags::PLAYER,
         }
     }
 

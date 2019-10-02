@@ -1,3 +1,4 @@
+#[macro_use] extern crate bitflags;
 extern crate sfml;
 
 mod entity;
@@ -12,9 +13,6 @@ use sf::RenderTarget;
 
 // Main
 fn main() {
-    // MCC constants
-    const CIRCLE_SPEED: f32 = 25.0;
-
     // Initialize game state
     let mut game_state = GameState::new();
 

@@ -7,8 +7,8 @@ pub fn to_dir(e: &sf::Event) -> Option<sf::Vector2f> {
         KeyPressed { code, .. } => {
             use sf::Key::*;
             Some(match code {
-                Up => sf::Vector2f::new(0., 1.),
-                Down => sf::Vector2f::new(0., -1.),
+                Up => sf::Vector2f::new(0., -1.),
+                Down => sf::Vector2f::new(0., 1.),
                 Left => sf::Vector2f::new(-1., 0.),
                 Right => sf::Vector2f::new(1., 0.),
                 _ => return None,
