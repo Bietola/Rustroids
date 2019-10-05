@@ -16,14 +16,13 @@ fn main() {
     // Initialize game state
     let mut game_state = GameState::new();
 
-    // Game window
+    // Game window setup
     let mut window = sfml::graphics::RenderWindow::new(
         (800, 600),
         "Hello SFML!",
         sf::Style::CLOSE,
         &Default::default(),
     );
-
     window.set_framerate_limit(60);
 
     // Game loop
@@ -42,8 +41,8 @@ fn main() {
                     window.close();
                 },
 
+                // Try to handle other types of events as player actions
                 _ => {
-                    // handle player actions
                     if let Some(action) = Action::from_event(&e) {
                         system::handle_player_action(&mut game_state, &action);
                     } else {
@@ -57,22 +56,9 @@ fn main() {
         // Update MCC state
         system::update_physics(&mut game_state);
 
-        // Clear screen
+        // Clear screen and render game
         window.clear(&sf::Color::BLACK);
-
-        // Draw MCC
-        // window.draw_circle_shape(
-        //     &sf::CircleShape::new(CIRCLE_RADIUS, CIRCLE_POINTS_NUM),
-        //     sf::RenderStates {
-        //         transform ship.state,
-        //         ..sf::RenderStates::default()
-        //     },
-        // );
         window.draw(&game_state);
-
-        // Display drawn stuff
         window.display();
     }
-
-    println!("Hello, world!");
 }

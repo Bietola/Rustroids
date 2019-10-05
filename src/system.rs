@@ -6,7 +6,7 @@ use crate::action::Action;
 use crate::game_state::GameState;
 use crate::entity::flags::Flags;
 
-/// Update position with velocity
+/// Update entity physics
 /// TODO: use acceleration to update velocity
 pub fn update_physics(game_state: &mut GameState) {
     for ent in &mut game_state.entities {

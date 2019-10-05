@@ -19,17 +19,18 @@ impl Action {
         }
     }
 
+    /// Make given player perform given action
     pub fn perform(&self, game_state: &mut GameState, ent_idx: EntityIndex) {
         use Action::*;
         match self {
+            // Set new velocity direction
             SetVelDir(new_vel_dir) => {
                 let ent = game_state.ent_at_mut(ent_idx);
 
+                // Scalar is used to maintain constant speed (changing only velocity direction)
                 use sf::vectors as v;
-                println!("old vel: {:?}", ent.vel); // DB
                 let speed: f32 = 5.; // TODO: let speed: f32 = v::magnitude(&ent.vel);
                 ent.vel = v::scalar_mul(speed, &new_vel_dir);
-                println!("setting speed to {:?} [{:?}]", ent.vel, speed); // DB
             }
         }
     }
