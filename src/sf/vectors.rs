@@ -16,11 +16,19 @@ where
     ((pow(v.x, 2) + pow(v.y, 2)).into()).sqrt()
 }
 
-/// Calculate multiplication between vector and scalar 
+/// Calculate multiplication between vector and scalar
 pub fn scalar_mul<T, U>(s: T, v: &sf::Vector2<U>) -> sf::Vector2<U>
 where
     U: Mul<Output = U> + Copy,
     T: Into<U> + Copy,
 {
     sf::Vector2::new(s.into() * v.x, s.into() * v.y)
+}
+
+/// Add two vectors together
+pub fn add<T>(lhs: &sf::Vector2<T>, rhs: &sf::Vector2<T>) -> sf::Vector2<T>
+where
+    T: Add<Output = T> + Copy,
+{
+    sf::Vector2::new(lhs.x + rhs.x, lhs.y + rhs.y)
 }

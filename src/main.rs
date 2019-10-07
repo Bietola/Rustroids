@@ -54,7 +54,8 @@ fn main() {
         }
 
         // Update MCC state
-        system::update_physics(&mut game_state);
+        // TODO: change constant timestamp to actual delta
+        system::physics::update_all(&mut game_state, sf::Time::milliseconds(1));
 
         // Clear screen and render game
         window.clear(&sf::Color::BLACK);

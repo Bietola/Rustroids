@@ -12,6 +12,7 @@ pub struct Entity {
     pub texture: sf::Texture,
     pub state: sf::Transform,
     pub vel: sf::Vector2f,
+    pub acc: sf::Vector2f,
     pub flags: Flags,
 }
 
@@ -32,6 +33,7 @@ impl Entity {
                 Self::SPRITE_SIZE as f32 / tsize.y as f32,
             ),
             vel: sf::Vector2::new(0.0, 0.0),
+            acc: sf::Vector2::new(0.0, 0.0),
             flags: Flags::PLAYER,
         }
     }
