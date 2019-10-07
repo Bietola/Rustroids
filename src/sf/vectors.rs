@@ -6,6 +6,7 @@ use num::{Float, One};
 
 use crate::sf;
 
+/// Calculate magnitude of vector
 pub fn magnitude<T, U>(v: &sf::Vector2<T>) -> U
 where
     U: Float,
@@ -15,6 +16,7 @@ where
     ((pow(v.x, 2) + pow(v.y, 2)).into()).sqrt()
 }
 
+/// Calculate multiplication between vector and scalar 
 pub fn scalar_mul<T, U>(s: T, v: &sf::Vector2<U>) -> sf::Vector2<U>
 where
     U: Mul<Output = U> + Copy,
