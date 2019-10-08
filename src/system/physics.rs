@@ -1,3 +1,4 @@
+use crate::entity::Entity;
 use crate::game_state::GameState;
 use crate::sf;
 
@@ -8,11 +9,14 @@ pub fn update_all(game_state: &mut GameState, delta: sf::Time) {
 }
 
 /// Handle position, velocity and acceleration update
-/// TODO: actually use acceleration
 fn update_kinematics(game_state: &mut GameState, delta: sf::Time) {
     for ent in &mut game_state.entities {
         // Update velocity
-        ent.acc = sf::vectors::add(&ent.acc, &ent.vel);
+        ent.vel = sf::vectors::clamp_magnitude(
+            sf::vectors::add(&ent.acc, &ent.vel),
+            0.,
+            Entity::PLAYER_MAX_VEL,
+        );
 
         // Update position
         ent.state.translate(ent.vel.x, ent.vel.y);

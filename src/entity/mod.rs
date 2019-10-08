@@ -6,6 +6,7 @@ use crate::sf;
 /// Index uniquely identifying an entity
 pub type EntityIndex = usize;
 
+
 /// Entity
 #[derive(Debug)]
 pub struct Entity {
@@ -17,7 +18,12 @@ pub struct Entity {
 }
 
 impl Entity {
-    const SPRITE_SIZE: u32 = 100;
+    /// TODO: do not rely on this
+    pub const SPRITE_SIZE: u32 = 100;
+    /// Player acceleration set by commands
+    pub const PLAYER_ACC: f32 = 10.;
+    /// Maximum velocity reachable by player
+    pub const PLAYER_MAX_VEL: f32 = 100.;
 
     /// Make player ship
     pub fn make_player_ship() -> Self {

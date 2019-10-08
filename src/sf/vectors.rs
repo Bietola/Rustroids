@@ -2,18 +2,39 @@ extern crate num;
 
 use std::ops::{Add, Mul};
 
-use num::{Float, One};
+use num::Float;
 
 use crate::sf;
 
-/// Calculate magnitude of vector
-pub fn magnitude<T, U>(v: &sf::Vector2<T>) -> U
+/// Clamp vector magnitude
+pub fn clamp_magnitude<T>(v: sf::Vector2<T>, min: T, max: T) -> sf::Vector2<T>
 where
-    U: Float,
-    T: Add<Output = T> + One + Copy + Into<U>,
+    T: Float,
+{
+    if magnitude(&v) > max {
+        change_magnitude(v, max)
+    } else if magnitude(&v) < min {
+        change_magnitude(v, min)
+    } else {
+        v
+    }
+}
+
+/// Change magnitude of vector
+pub fn change_magnitude<T>(v: sf::Vector2<T>, new_mag: T) -> sf::Vector2<T>
+where
+    T: Float,
+{
+    scalar_mul(new_mag / magnitude(&v), &v)
+}
+
+/// Calculate magnitude of vector
+pub fn magnitude<T>(v: &sf::Vector2<T>) -> T
+where
+    T: Float,
 {
     use num::pow;
-    ((pow(v.x, 2) + pow(v.y, 2)).into()).sqrt()
+    (pow(v.x, 2) + pow(v.y, 2))
 }
 
 /// Calculate multiplication between vector and scalar

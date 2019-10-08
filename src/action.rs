@@ -1,21 +1,25 @@
 use crate::entity::EntityIndex;
 use crate::game_state::GameState;
 use crate::sf;
+use crate::entity::Entity;
 
 /// Action that can be performed in a game
 pub enum Action {
-    SetVelDir(sf::Vector2f),
+    SetAccDir(sf::Vector2f),
 }
 
 impl Action {
     /// Create an action from an sfml event
-    pub fn from_event(e: &sf::Event) -> Option<Self> {
-        if let Some(new_dir) = sf::utils::to_dir(e) {
-            // Move action
-            Some(Action::SetVelDir(new_dir))
-        } else {
-            // WIP
-            None
+    pub fn from_event(e: &sf::Event) -> Option<Action> {
+        use sf::Event::*;
+        match e {
+            // Down presses are trated as a desire to changea acceleration direction
+            KeyPressed { code, .. } => sf::utils::to_dir(*code).map(Self::SetAccDir),
+
+            // Up presses represent stop acceleration
+            KeyReleased { .. } => Some(Self::SetAccDir(sf::Vector2f::from((0., 0.)))),
+
+            _ => None,
         }
     }
 
@@ -24,13 +28,10 @@ impl Action {
         use Action::*;
         match self {
             // Set new velocity direction
-            SetVelDir(new_vel_dir) => {
+            SetAccDir(new_acc_dir) => {
                 let ent = game_state.ent_at_mut(ent_idx);
 
-                // Scalar is used to maintain constant speed (changing only velocity direction)
-                use sf::vectors as v;
-                let speed: f32 = 5.; // TODO: let speed: f32 = v::magnitude(&ent.vel);
-                ent.vel = v::scalar_mul(speed, &new_vel_dir);
+                ent.acc = sf::vectors::scalar_mul(Entity::PLAYER_ACC, new_acc_dir);
             }
         }
     }
