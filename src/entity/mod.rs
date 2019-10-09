@@ -21,9 +21,9 @@ impl Entity {
     /// TODO: do not rely on this
     pub const SPRITE_SIZE: u32 = 100;
     /// Player acceleration set by commands
-    pub const PLAYER_ACC: f32 = 10.;
+    pub const PLAYER_ACC: f32 = 0.02;
     /// Maximum velocity reachable by player
-    pub const PLAYER_MAX_VEL: f32 = 100.;
+    pub const PLAYER_MAX_VEL: f32 = 10.;
 
     /// Make player ship
     pub fn make_player_ship() -> Self {

@@ -32,6 +32,7 @@ impl Action {
                 let ent = game_state.ent_at_mut(ent_idx);
 
                 ent.acc = sf::vectors::scalar_mul(Entity::PLAYER_ACC, new_acc_dir);
+                debug!("player now accelerating at: {:?}", ent.acc);
             }
         }
     }

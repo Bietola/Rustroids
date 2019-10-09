@@ -1,5 +1,3 @@
-extern crate bit_set;
-
 use crate::entity as ent;
 use crate::sf;
 use ent::flags;
@@ -60,7 +58,7 @@ impl GameState {
 impl sf::Drawable for GameState {
     fn draw<'a: 'shader, 'texture, 'shader, 'shader_texture>(
         &'a self,
-        target: &mut sf::RenderTarget,
+        target: &mut dyn sf::RenderTarget,
         _states: sf::RenderStates<'texture, 'shader, 'shader_texture>,
     ) {
         for ent in &self.entities {
