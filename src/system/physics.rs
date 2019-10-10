@@ -15,13 +15,12 @@ pub fn update_all(game_state: &mut GameState, delta: sf::Time) {
 fn update_kinematics(game_state: &mut GameState, delta: sf::Time) {
     for ent in &mut game_state.entities {
         // Update velocity
-        ent.vel = sf::vectors::add(
-            ent.vel,
+        use sf::vec::Vec2;
+        ent.vel = (Vec2(ent.vel) +
             // Entity acceleration
-            &sf::vectors::scalar_mul(delta.as_milliseconds() as f32, &ent.acc),
+            sf::vectors::scalar_mul(delta.as_milliseconds() as f32, &ent.acc) +
             // Acceleration due to friction
-            sf::vectors::scalar_mul(-FRICTION_AMOUNT, &sf::vectors::dir(&ent.acc)),
-        );
+            sf::vectors::scalar_mul(-FRICTION_AMOUNT, &sf::vectors::dir(&ent.acc))).into();
 
         // DB logging
         debug!("Updated vel: {:?}", ent.vel);

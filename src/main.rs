@@ -3,6 +3,8 @@ extern crate bitflags;
 #[macro_use]
 extern crate log;
 extern crate simplelog;
+#[macro_use]
+extern crate derive_more;
 
 extern crate sfml;
 
