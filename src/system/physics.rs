@@ -15,28 +15,28 @@ pub fn update_all(game_state: &mut GameState, delta: sf::Time) {
 fn update_kinematics(game_state: &mut GameState, delta: sf::Time) {
     for ent in &mut game_state.entities {
         // Update velocity
-        use sf::vec::Vec2;
-        ent.vel = Vec2(ent.vel)
+        ent.vel = ent
+            .vel
             // Entity acceleration
-            .vec_add(Vec2(ent.acc) * delta.as_milliseconds() as f32)
+            .vec_add(ent.acc * delta.as_milliseconds() as f32)
             // Apply friction
             .scalar_mul(FRICTION_AMOUNT)
             // Clamp velocity to maximium allowed for player
-            .clamp_on(|vec| vec.0.x.abs(), 0., Entity::PLAYER_MAX_VEL)
-            .clamp_on(|vec| vec.0.y.abs(), 0., Entity::PLAYER_MAX_VEL)
+            .clamp_on(|vec| vec.x.abs(), 0., Entity::PLAYER_MAX_VEL)
+            .clamp_on(|vec| vec.y.abs(), 0., Entity::PLAYER_MAX_VEL)
             // Convert to sfml vector
             .into();
 
         // DB logging
         debug!(
             "delta_vel from acc {:?}",
-            Vec2(ent.acc) * delta.as_milliseconds() as f32
+            ent.acc * delta.as_milliseconds() as f32
         );
-        debug!("delta_vel from friction {:?}", Vec2(ent.acc).dir());
+        debug!("delta_vel from friction {:?}", ent.acc.dir());
         debug!("Updated vel: {:?}", ent.vel);
         debug!(
             "Updated vel mag: {:?}/{:?}",
-            sf::vectors::magnitude(&ent.vel),
+            ent.vel.mag(),
             Entity::PLAYER_MAX_VEL
         );
 

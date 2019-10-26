@@ -3,6 +3,8 @@ pub mod flags;
 use crate::entity::flags::Flags;
 use crate::sf;
 
+use crate::sf::vec::Vec2;
+
 /// Index uniquely identifying an entity
 pub type EntityIndex = usize;
 
@@ -12,8 +14,8 @@ pub type EntityIndex = usize;
 pub struct Entity {
     pub texture: sf::Texture,
     pub state: sf::Transform,
-    pub vel: sf::Vector2f,
-    pub acc: sf::Vector2f,
+    pub vel: Vec2,
+    pub acc: Vec2,
     pub flags: Flags,
 }
 
@@ -39,8 +41,8 @@ impl Entity {
                 Self::SPRITE_SIZE as f32 / tsize.x as f32,
                 Self::SPRITE_SIZE as f32 / tsize.y as f32,
             ),
-            vel: sf::Vector2::new(0.0, 0.0),
-            acc: sf::Vector2::new(0.0, 0.0),
+            vel: Vec2::new(0.0, 0.0),
+            acc: Vec2::new(0.0, 0.0),
             flags: Flags::PLAYER,
         }
     }

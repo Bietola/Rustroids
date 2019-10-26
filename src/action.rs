@@ -33,14 +33,18 @@ impl Action {
     /// Make given player perform given action
     pub fn perform(&self, game_state: &mut GameState, ent_idx: EntityIndex) {
         use Action::*;
-        use crate::sf::vec::Vec2;
         match self {
-            // Set new velocity direction
-            SetThrustAngle(new_acc_dir) => {
+            // Set new thrust direction
+            SetThrustAngle(new_acc_angle) => {
                 let ent = game_state.ent_at_mut(ent_idx);
 
-                ent.acc = Vec2(ent.acc).set_dir(Vec2::from_rads(new_acc_dir));
+                ent.acc = ent.acc.change_dir_angle(*new_acc_angle);
                 debug!("player now accelerating at: {:?}", ent.acc);
+            }
+
+            // Set new thurst amount
+            SetThrustMagnitude(_new_acc_amm) => {
+                unimplemented!();
             }
         }
     }

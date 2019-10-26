@@ -1,15 +1,15 @@
 extern crate num_traits;
 
 /// The element used inside a vector
-const ZERO_VEC_ELE: VecEle = 0.;
+pub const ZERO_VEC_ELE: VecEle = 0.;
 
 /// Radiant unit used to represent angles
-type Rads = f32;
+pub type Rads = f32;
 
 /// Type shared by all elements inside Vecs
 ///
 /// NB. This is always supposed to be some kind of float
-type VecEle = f32;
+pub type VecEle = f32;
 
 /// Geomteric vector of 2 float coordinates
 #[derive(Debug, Clone, Copy, Add, Mul, Sub, PartialOrd, PartialEq)]
