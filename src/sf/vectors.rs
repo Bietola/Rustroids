@@ -1,6 +1,6 @@
 extern crate num_traits;
 
-use std::ops::{Add, Mul};
+use std::ops::Mul;
 
 use num_traits::Float;
 use num_traits::ops::inv::Inv;

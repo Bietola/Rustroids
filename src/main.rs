@@ -1,3 +1,5 @@
+#![feature(slice_patterns)]
+
 #[macro_use]
 extern crate bitflags;
 #[macro_use]
@@ -23,7 +25,7 @@ use sf::RenderTarget;
 // Main
 fn main() {
     // Initialize logging system
-    let _ = SimpleLogger::init(LevelFilter::Debug, Config::default());
+    let _ = SimpleLogger::init(LevelFilter::Info, Config::default());
 
     // Initialize game state
     let mut game_state = GameState::new();
@@ -65,11 +67,15 @@ fn main() {
 
                 // Try to handle other types of events as player actions
                 _ => {
-                    if let Some(action) = Action::from_event(&e) {
-                        system::handle_player_action(&mut game_state, &action);
-                    } else {
-                        // Do nothing...
-                        ;
+                    match Action::from_event(&e).as_slice() {
+                        [] => {
+                            // Ignore events that are not linked to any action
+                        }
+                        actions => {
+                            for action in actions {
+                                system::handle_player_action(&mut game_state, &action)
+                            }
+                        }
                     }
                 }
             }

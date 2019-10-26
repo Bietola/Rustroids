@@ -11,6 +11,8 @@ use crate::entity::flags::Flags;
 
 /// Subject entity to given game action
 pub fn handle_player_action(game_state: &mut GameState, action: &Action) {
+    info!("action performed: {:?}", action);
+
     action.perform(
         game_state,
         game_state

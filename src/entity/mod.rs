@@ -22,8 +22,9 @@ impl Entity {
     pub const SPRITE_SIZE: u32 = 100;
     /// Player acceleration set by commands
     pub const PLAYER_ACC: f32 = 0.02;
-    /// Maximum velocity reachable by player
+    /// Maximum and minimum velocities reachable by player
     pub const PLAYER_MAX_VEL: f32 = 10.;
+    pub const PLAYER_MIN_VEL: f32 = 0.5;
 
     /// Make player ship
     pub fn make_player_ship() -> Self {
@@ -54,7 +55,7 @@ impl Entity {
 impl sf::Drawable for &Entity {
     fn draw<'a: 'shader, 'texture, 'shader, 'shader_texture>(
         &'a self,
-        target: &mut sf::RenderTarget,
+        target: &mut dyn sf::RenderTarget,
         states: sf::RenderStates<'texture, 'shader, 'shader_texture>,
     ) {
         target.draw_with_renderstates(
