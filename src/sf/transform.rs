@@ -1,8 +1,9 @@
 use crate::sf;
 
 /// Combine two sfml transforms
-/// TODO: WIP
-pub fn combine(lhs: sf::Transform, rhs: sf::Transform) -> sf::Transform {
+pub fn combine(mut lhs: sf::Transform, mut rhs: sf::Transform) -> sf::Transform {
+    lhs.combine(&mut rhs);
+
     lhs
 }
 
