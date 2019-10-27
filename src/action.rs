@@ -1,3 +1,4 @@
+use crate::entity::Entity;
 use crate::entity::EntityIndex;
 use crate::game_state::GameState;
 use crate::sf;
@@ -16,15 +17,20 @@ impl Action {
     /// Create an action from an sfml event
     pub fn from_event(e: &sf::Event) -> Vec<Action> {
         use sf::Event::*;
+        use Action::*;
         match e {
             // Down presses are trated as a desire to change acceleration direction
+            // TODO: research Either-List monad conversions
             KeyPressed { code, .. } => match sf::utils::to_angle(*code) {
                 None => vec![],
-                Some(new_angle) => vec![Self::SetThrustAngle(new_angle)],
+                Some(new_angle) => vec![
+                    SetThrustMagnitude(Entity::PLAYER_ACC),
+                    SetThrustAngle(new_angle),
+                ],
             },
 
             // Up presses represent stop acceleration
-            KeyReleased { .. } => vec![Self::SetThrustMagnitude(0.)],
+            KeyReleased { .. } => vec![SetThrustMagnitude(0.)],
 
             _ => vec![],
         }
@@ -43,8 +49,10 @@ impl Action {
             }
 
             // Set new thurst amount
-            SetThrustMagnitude(_new_acc_amm) => {
-                unimplemented!();
+            SetThrustMagnitude(new_acc_amm) => {
+                let ent = game_state.ent_at_mut(ent_idx);
+
+                ent.acc = ent.acc.change_mag(*new_acc_amm);
             }
         }
     }

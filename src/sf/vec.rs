@@ -1,7 +1,14 @@
 extern crate num_traits;
 
-/// The element used inside a vector
+use num_traits::Zero;
+
+/// Zero element
 pub const ZERO_VEC_ELE: VecEle = 0.;
+
+/// Element which is approximately 0
+///
+/// Mostly used in float comparisons.
+pub const EPSILON_VEC_ELE: VecEle = std::f32::EPSILON;
 
 /// Radiant unit used to represent angles
 pub type Rads = f32;
@@ -32,7 +39,7 @@ impl Vec2 {
 
     /// Get unit vector indicating direction from angle expressed in radiants
     fn from_rads(rads: Rads) -> Vec2 {
-        Vec2::new(rads.sin(), rads.cos())
+        Vec2::new(rads.cos(), rads.sin())
     }
 
     /// Get vector magnitude
@@ -54,16 +61,54 @@ impl Vec2 {
     pub fn dir(self) -> Vec2 {
         let mag = self.mag();
 
-        if mag < std::f32::EPSILON {
+        if mag < EPSILON_VEC_ELE {
             Vec2::new(ZERO_VEC_ELE, ZERO_VEC_ELE)
         } else {
             self * (1. / self.mag())
         }
     }
 
+    /// Get angle associated to direction that vector is poiting to
+    ///
+    /// NB. Returns `None` if vector is too small (and hence has no direction).
+    pub fn dir_angle(self) -> Option<Rads> {
+        let mag = self.mag();
+
+        if mag < EPSILON_VEC_ELE {
+            None
+        } else {
+            use std::f32::consts::PI;
+
+            let atan = (self.y / self.x).atan();
+
+            Some(if self.x >= 0. && self.y >= 0. {
+                // First quadrant
+                atan
+            } else if self.x < 0. && self.y >= 0. {
+                // Second quadrant
+                PI / 2. - atan
+            } else if self.x < 0. && self.y < 0. {
+                // Third quadrant
+                PI + atan
+            } else if self.x >= 0. && self.y < 0. {
+                // Fourth quadrant
+                // NB. since `atan` is negative here, the value of the angle does not exceed
+                // 2pi
+                2. * PI + atan
+            } else {
+                // Should never arrive here...
+                panic!("Impossible...");
+            })
+        }
+    }
+
     /// Return vector with given magnitude without changing its direction
     pub fn change_mag(self, new_mag: VecEle) -> Vec2 {
-        self.dir() * new_mag
+        if self.mag() < EPSILON_VEC_ELE {
+            Vec2::new(1., 0.) * new_mag
+        } else {
+            self.dir() * new_mag
+        }
     }
 
     /// Return vector with direction as specified and unvaried magnitude
@@ -141,11 +186,47 @@ mod tests {
 
     #[test]
     fn vec_mag() {
-        use std::f32::EPSILON;
+        assert!(Vec2::new(1., 1.).mag() - (2f32).sqrt() < EPSILON_VEC_ELE);
+        assert!(Vec2::new(2., 2.).mag() - (8f32).sqrt() < EPSILON_VEC_ELE);
+        assert!(Vec2::new(3., 3.).mag() - (18f32).sqrt() < EPSILON_VEC_ELE);
+        assert!(Vec2::new(4., 4.).mag() - (32f32).sqrt() < EPSILON_VEC_ELE);
+    }
 
-        assert!(Vec2::new(1., 1.).mag() - (2f32).sqrt() < EPSILON);
-        assert!(Vec2::new(2., 2.).mag() - (8f32).sqrt() < EPSILON);
-        assert!(Vec2::new(3., 3.).mag() - (18f32).sqrt() < EPSILON);
-        assert!(Vec2::new(4., 4.).mag() - (32f32).sqrt() < EPSILON);
+    #[test]
+    fn dir_angle_always_positive() {
+        // Numbers correspond to quadrants
+        let angle1 = Vec2::new(1., 1.).dir_angle().unwrap();
+        let angle2 = Vec2::new(-1., 1.).dir_angle().unwrap();
+        let angle3 = Vec2::new(-1., -1.).dir_angle().unwrap();
+        let angle4 = Vec2::new(1., -1.).dir_angle().unwrap();
+
+        // All should be positive angles
+        let rads_zero = Rads::zero();
+        assert!(
+            angle1 > rads_zero && angle2 > rads_zero && angle3 > rads_zero && angle4 > rads_zero
+        );
+    }
+
+    #[test]
+    fn dir_angle_stays_in_quadrant_of_vector() {
+        // Numbers correspond to quadrants
+        let angle1 = Vec2::new(1., 1.).dir_angle().unwrap();
+        let angle2 = Vec2::new(-1., 1.).dir_angle().unwrap();
+        let angle3 = Vec2::new(-1., -1.).dir_angle().unwrap();
+        let angle4 = Vec2::new(1., -1.).dir_angle().unwrap();
+
+        // All angles should lie in their respective quadrants
+        use std::f32::consts::PI;
+        assert!(0. < angle1 && angle1 < PI / 2.);
+        assert!(PI / 2. < angle2 && angle2 < PI);
+        assert!(PI < angle3 && angle3 < 3. * (PI / 2.));
+        assert!(3. * (PI / 2.) < angle4 && angle4 < 2. * PI);
+    }
+
+    #[test]
+    fn change_mag_of_epsilon_vec_sets_default_position() {
+        let angle = Vec2::origin().change_mag(1.).dir_angle().unwrap();
+
+        assert_eq!(angle, Rads::zero());
     }
 }
